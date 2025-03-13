@@ -23,6 +23,7 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Clone Repository
         uses: actions/checkout@v4
@@ -57,7 +58,6 @@ jobs:
           NODE_DEBUG: release-it:*
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        permissions: write-all
       - name: 🐛 Debug Build
         uses: stateful/vscode-server-action@v1
         if: failure()
