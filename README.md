@@ -38,26 +38,31 @@ The module exposes the following methods:
 
 Run code cells from markdown files:
 
-```ts {"name":"runExample"}
+```javascript {"name":"runExample"}
 import { run } from "runme";
 
-const result = await run("helloWorld");
+const result = await run(["helloWorld"]);
 console.log(result); // outputs: { exitCode: 0, stdout: 'Hello World\r\n', stderr: '' }
 ```
 
-### `createServer`
-
-Runme can run various commands in a single shell session that allows you to keep environment variables around. For that you need to start a server as execution engine:
+Runme can run multiple commands in a single shell session that allows you to keep environment variables around.
 
 ```javascript {"terminalRows":"15"}
 import { run } from "runme";
 
-// execute `export FOO="bar"` from markdown code cell with id "export"
-await run(["export"]);
-
 // execute `echo "exported FOO=$FOO"` from markdown code cell with id "print"
 const result = await run(["export", "print"]);
-console.log(result); // outputs: { exitCode: 0, stdout: 'exported FOO=bar\r\n', stderr: '' }
+console.log(result);
+// outputs:
+// {
+//   exitCode: 0,
+//   stdout: ' ►  Running task export...\n' +
+//     ' ►  ✓ Task export exited with code 0\n' +
+//     ' ►  Running task print...\n' +
+//     'exported FOO=bar\r\n' +
+//     ' ►  ✓ Task print exited with code 0\n',
+//   stderr: ''
+// }
 ```
 
 ## Contributing
