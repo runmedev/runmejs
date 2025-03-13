@@ -1,7 +1,10 @@
 {
   "name": "runme",
   "version": "3.12.2",
-  "author": "Christian Bromann <christian@stateful.com>",
+  "author": "Christian Bromann <info@stateful.com>",
+  "contributors": [
+    "Sebastian (Tiedtke) Huckleberry <sebastian@stateful.com>"
+  ],
   "license": "Apache-2.0",
   "description": "A JavaScript module to use Runme in Node.js",
   "homepage": "https://github.com/runmedev/runmejs#readme",
