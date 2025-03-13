@@ -23,7 +23,8 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: write
     steps:
       - name: Clone Repository
         uses: actions/checkout@v4
