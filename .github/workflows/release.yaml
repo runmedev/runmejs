@@ -44,7 +44,7 @@ jobs:
       - name: Setup Git
         run: |
           git config --global user.name "stateful-wombot"
-          git config --global user.email "christian+github-bot@stateful.com"
+          git config --global user.email "sebastian+github-bot@stateful.com"
       - name: Check NPM Auth
         run: |
           echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
