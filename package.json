@@ -46,7 +46,6 @@
     "@types/wait-on": "^5.3.1",
     "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.59.11",
-    "@vitest/coverage-c8": "^0.32.0",
     "c8": "^7.14.0",
     "eslint": "^8.42.0",
     "eslint-plugin-import": "^2.27.5",
@@ -57,7 +56,7 @@
     "runme": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3",
-    "vitest": "^0.32.0"
+    "vitest": "^3.0.8"
   },
   "dependencies": {
     "@actions/exec": "^1.1.1",

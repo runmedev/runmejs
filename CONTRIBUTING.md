@@ -2,7 +2,7 @@
 cwd: ./
 runme:
   id: 01HF7GMQ6PE0NNKN60P50JEZ17
-  version: v2.2
+  version: v3
 ---
 
 # Contributing
@@ -44,7 +44,7 @@ npx eslint src tests
 unit tests via [Vitest](https://vitest.dev/):
 
 ```sh {"id":"01HF7GMQ6NTPMHCVN4BY0W782F","name":"test:unit"}
-npx vitest --config ./vitest.config.ts --retry=3 --threads=false
+npx vitest --config ./vitest.config.ts --retry=3
 ```
 
 Update snapshots used in tests if necesary:
