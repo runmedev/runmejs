@@ -54,7 +54,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Release
-        run: npx release-it@15.10.3 --github.release --ci --npm.skipChecks --no-git.requireCleanWorkingDir ${{github.event.inputs.releaseType}} ${{github.event.inputs.additionalFlags}}
+        run: npx release-it --github.release --ci --npm.skipChecks --no-git.requireCleanWorkingDir ${{github.event.inputs.releaseType}} ${{github.event.inputs.additionalFlags}}
         env:
           NODE_DEBUG: release-it:*
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
