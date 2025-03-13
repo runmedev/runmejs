@@ -1,14 +1,14 @@
 ---
 runme:
   id: 01HP7J575TFZ65WYPQPZGE7STA
-  version: v2.2
+  version: v3
 ---
 
-# Runme.js [![Test Changes](https://github.com/stateful/runmejs/actions/workflows/test.yaml/badge.svg)](https://github.com/stateful/runmejs/actions/workflows/test.yaml) [![npm version](https://badge.fury.io/js/runme.svg)](https://badge.fury.io/js/runme) [![Join us on Discord](https://img.shields.io/discord/878764303052865537?color=5b39df&label=Join%20us%20on%20Discord)](https://discord.com/invite/BQm8zRCBUY)
+# Runme.js [![Test Changes](https://github.com/runmedev/runmejs/actions/workflows/test.yaml/badge.svg)](https://github.com/runmedev/runmejs/actions/workflows/test.yaml) [![npm version](https://badge.fury.io/js/runme.svg)](https://badge.fury.io/js/runme) [![Join us on Discord](https://img.shields.io/discord/878764303052865537?color=5b39df&label=Join%20us%20on%20Discord)](https://discord.com/invite/BQm8zRCBUY)
 
 > A JavaScript module to use [Runme](https://runme.dev) in Node.js.
 
-*Runme.js* contains the [Runme CLI](https://github.com/stateful/runme) and allows to access its functionality through a simple JavaScript interface. The CLI binary is downloaded and cached when the interface is first being used.
+_Runme.js_ contains the [Runme CLI](https://github.com/stateful/runme) and allows to access its functionality through a simple JavaScript interface. The CLI binary is downloaded and cached when the interface is first being used.
 
 ## Install
 
@@ -45,27 +45,25 @@ The module exposes the following methods:
 Run code cells from markdown files:
 
 ```ts {"name":"runExample"}
-import { run } from 'runme'
+import { run } from "runme";
 
-const result = await run('helloWorld')
-console.log(result) // outputs: { exitCode: 0, stdout: 'Hello World\r\n', stderr: '' }
+const result = await run("helloWorld");
+console.log(result); // outputs: { exitCode: 0, stdout: 'Hello World\r\n', stderr: '' }
 ```
 
 ### `createServer`
 
 Runme can run various commands in a single shell session that allows you to keep environment variables around. For that you need to start a server as execution engine:
 
-```ts
-import { createServer, run } from 'runme'
-
-const server = await createServer()
+```javascript {"terminalRows":"15"}
+import { run } from "runme";
 
 // execute `export FOO="bar"` from markdown code cell with id "export"
-await run('export', server)
+await run(["export"]);
 
 // execute `echo "exported FOO=$FOO"` from markdown code cell with id "print"
-const result = await run('print', server)
-console.log(result) // outputs: { exitCode: 0, stdout: 'exported FOO=bar\r\n', stderr: '' }
+const result = await run(["export", "print"]);
+console.log(result); // outputs: { exitCode: 0, stdout: 'exported FOO=bar\r\n', stderr: '' }
 ```
 
 ## Contributing
