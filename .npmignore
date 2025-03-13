@@ -12,3 +12,4 @@ coverage
 deno.lock
 .bin
 examples
+.vscode-test
