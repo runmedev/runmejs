@@ -37,22 +37,27 @@ export async function run (workflows: string[], args: RunArgs = {}): Promise<Run
   execArgs.push(...workflows)
 
   const outStream = new RunmeStream()
-  outStream.pipe(args.outStream || process.stdout).pipe
   const errStream = new RunmeStream()
-  errStream.pipe(args.errStream || process.stderr)
-  const exitCode = await exec(runmePath, execArgs, {
-    ...args,
-    outStream,
-    errStream,
-    env: {
-      ...process.env,
-      /**
-       * Keep env empty to force Runme to look for the project
-       * root based on the nearest git repository.
-       */
-      RUNME_PROJECT: ''
+  let exitCode = 1
+  try {
+    outStream.pipe(args.outStream || process.stdout).pipe
+    errStream.pipe(args.errStream || process.stderr)
+    exitCode = await exec(runmePath, execArgs, {
+      ...args,
+      ignoreReturnCode: true,
+      outStream,
+      errStream,
+      env: {
+        ...process.env as Record<string, string>,
+      }
+    })
+  } catch (error) {
+    if (error instanceof Error) {
+      errStream.write(`Error executing runme: ${error.message}\n`)
+    } else {
+      errStream.write(`Error executing runme: ${error}\n`)
     }
-  })
+  }
 
   return {
     exitCode,
