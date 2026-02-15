@@ -48,7 +48,7 @@ jobs:
           git config --global user.name "stateful-wombot"
           git config --global user.email "sebastian+github-bot@stateful.com"
       - name: Release
-        run: npx release-it --github.release --ci --npm.skipChecks --no-git.requireCleanWorkingDir ${{github.event.inputs.releaseType}} ${{github.event.inputs.additionalFlags}}
+        run: npx release-it --github.release --github.autoGenerate --ci --npm.skipChecks --no-git.requireCleanWorkingDir ${{github.event.inputs.releaseType}} ${{github.event.inputs.additionalFlags}}
         env:
           NODE_DEBUG: release-it:*
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
