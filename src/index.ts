@@ -40,9 +40,9 @@ export async function run (workflows: string[], args: RunArgs = {}): Promise<Run
   const errStream = new RunmeStream()
   let exitCode = 1
   try {
-    outStream.pipe(args.outStream || process.stdout).pipe
+    outStream.pipe(args.outStream || process.stdout)
     errStream.pipe(args.errStream || process.stderr)
-    exitCode = await exec(runmePath, execArgs, {
+    exitCode = (await exec(runmePath, execArgs, {
       ...args,
       ignoreReturnCode: true,
       outStream,
@@ -50,7 +50,7 @@ export async function run (workflows: string[], args: RunArgs = {}): Promise<Run
       env: {
         ...process.env as Record<string, string>,
       }
-    })
+    })) ?? 1
   } catch (error) {
     if (error instanceof Error) {
       errStream.write(`Error executing runme: ${error.message}\n`)
@@ -85,7 +85,7 @@ export async function createServer (serverAddress?: string, args: GlobalArgs = {
   })
   await Promise.race([
     waitOn({ resources: [`tcp:${address}`] }),
-    new Promise((_, reject) => server.on('exit', (exitCode) => exitCode && reject(new Error('failed to start server'))))
+    new Promise((_, reject) => server.on('exit', (exitCode, signal) => reject(new Error(`server exited unexpectedly (code: ${exitCode}, signal: ${signal})`))))
   ])
 
   return server
