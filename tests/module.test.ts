@@ -7,11 +7,6 @@ import { run, createServer } from '../src/index.js'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
-// reliable snapshots x-platform and node versions
-function toJsonSnapshot(obj: any) {
-  return JSON.stringify(obj, null, 1)
-}
-
 beforeAll(async () => {
   await fs.rm(
     path.resolve(__dirname, '..', '.bin'),
@@ -20,15 +15,22 @@ beforeAll(async () => {
 })
 
 test('run', async () => {
-  expect(toJsonSnapshot(await run(['helloWorld'])))
-    .toMatchSnapshot()
-  expect(toJsonSnapshot(await run(['fail'], { ignoreReturnCode: true })))
-    .toMatchSnapshot()
+  const helloResult = await run(['helloWorld'])
+  expect(helloResult.exitCode).toBe(0)
+  expect(helloResult.stdout).toContain('Hello World')
+  expect(helloResult.stderr).toBe('')
+
+  const failResult = await run(['fail'], { ignoreReturnCode: true })
+  expect(failResult.exitCode).toBe(1)
+  expect(failResult.stdout).toContain('failed to run command "fail": exit code: 1')
+  expect(failResult.stderr).toBe('')
 })
 
 test('createServer', async () => {
   const server = await createServer()
-  expect(toJsonSnapshot(await run(['export', 'print'], { server })))
-    .toMatchSnapshot()
+  const result = await run(['export', 'print'], { server })
+  expect(result.exitCode).toBe(0)
+  expect(result.stdout).toContain('exported FOO=bar')
+  expect(result.stderr).toBe('')
   server.kill()
 })
