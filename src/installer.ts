@@ -16,13 +16,14 @@ import { SUPPORTE_PLATFORMS } from './constants.js'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const streamPipeline = util.promisify(stream.pipeline)
+const DEFAULT_RUNME_DOWNLOAD_BASE_URL = 'https://downloads.runme.dev/runme'
 
 /**
  * download runme binary from GitHub
  * @returns file path to downloaded binary
  */
 export async function download (runmeVersion = process.env.RUNME_VERSION || 'latest') {
-  const targetDir = path.resolve(__dirname, '..', '.bin')
+  const targetDir = path.resolve(process.env.RUNME_BIN_DIR || path.resolve(__dirname, '..', '.bin'))
   const isWindows = os.platform() === 'win32'
   const binaryFilePath = path.resolve(targetDir, `runme${isWindows ? '.exe' : ''}`)
 
@@ -36,7 +37,8 @@ export async function download (runmeVersion = process.env.RUNME_VERSION || 'lat
   }
 
   const [version, type, target, ext] = [runmeVersion, platform.TYPE.toLocaleLowerCase(), platform.TARGET, platform.EXTENSION]
-  const url = `https://download.stateful.com/runme/${version}/runme_${type.replace('_nt', '')}_${target}.${ext}`
+  const downloadBaseUrl = (process.env.RUNME_DOWNLOAD_BASE_URL || DEFAULT_RUNME_DOWNLOAD_BASE_URL).replace(/\/$/, '')
+  const url = `${downloadBaseUrl}/${version}/runme_${type.replace('_nt', '')}_${target}.${ext}`
   const res = await fetch(url)
 
   if (!res.body) {

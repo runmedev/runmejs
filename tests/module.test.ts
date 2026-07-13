@@ -1,17 +1,25 @@
 import fs from 'node:fs/promises'
-import url from 'node:url'
+import os from 'node:os'
 import path from 'node:path'
-import { test, expect, beforeAll } from 'vitest'
+import { test, expect, beforeAll, afterAll } from 'vitest'
 
 import { run, createServer } from '../src/index.js'
 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
+const originalRunmeBinDir = process.env.RUNME_BIN_DIR
+let runmeBinDir: string
 
 beforeAll(async () => {
-  await fs.rm(
-    path.resolve(__dirname, '..', '.bin'),
-    { recursive: true, force: true }
-  )
+  runmeBinDir = await fs.mkdtemp(path.join(os.tmpdir(), 'runmejs-bin-'))
+  process.env.RUNME_BIN_DIR = runmeBinDir
+})
+
+afterAll(async () => {
+  if (originalRunmeBinDir) {
+    process.env.RUNME_BIN_DIR = originalRunmeBinDir
+  } else {
+    delete process.env.RUNME_BIN_DIR
+  }
+  await fs.rm(runmeBinDir, { recursive: true, force: true })
 })
 
 test('run', async () => {

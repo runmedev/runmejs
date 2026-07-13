@@ -2,7 +2,7 @@ import os from 'node:os'
 import fs from 'node:fs/promises'
 import cp from 'node:child_process'
 
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach, afterAll } from 'vitest'
 import fetch from 'node-fetch'
 
 import { download } from '../src/installer.js'
@@ -49,6 +49,18 @@ beforeAll(() => {
   console.table = vi.fn()
 })
 
+beforeEach(() => {
+  delete process.env.RUNME_BIN_DIR
+  delete process.env.RUNME_DOWNLOAD_BASE_URL
+  vi.mocked(fs.access).mockResolvedValue(undefined)
+  vi.mocked(fs.mkdir).mockClear()
+  vi.mocked(fetch).mockClear()
+  vi.mocked(os.type).mockReturnValue('Darwin')
+  vi.mocked(os.platform).mockReturnValue('darwin')
+  vi.mocked(console.log).mockClear()
+  vi.mocked(console.table).mockClear()
+})
+
 describe('CLI Download', () => {
   it('does not download if already downloaded', async () => {
     expect(await download()).toStrictEqual(expect.any(String))
@@ -71,10 +83,30 @@ describe('CLI Download', () => {
     vi.mocked(fs.access).mockRejectedValue(new Error('ups'))
     expect(await download()).toStrictEqual(expect.any(String))
     expect(fetch).toBeCalledTimes(1)
+    expect(vi.mocked(fetch).mock.calls[0][0]).toContain('https://downloads.runme.dev/runme/latest/')
     expect(vi.mocked(fetch).mock.calls[0][0]).toContain('runme_darwin_arm64.tar.gz')
   })
 
+  it('supports custom download base URLs', async () => {
+    process.env.RUNME_DOWNLOAD_BASE_URL = 'https://example.com/runme'
+    vi.mocked(fs.access).mockRejectedValue(new Error('ups'))
+    vi.mocked(fetch).mockClear()
+
+    expect(await download('3.17.1')).toStrictEqual(expect.any(String))
+    expect(vi.mocked(fetch).mock.calls[0][0])
+      .toBe('https://example.com/runme/3.17.1/runme_darwin_arm64.tar.gz')
+  })
+
+  it('supports custom binary directories', async () => {
+    process.env.RUNME_BIN_DIR = '/tmp/runmejs-test-bin'
+    vi.mocked(fs.access).mockRejectedValue(new Error('ups'))
+
+    expect(await download()).toBe('/tmp/runmejs-test-bin/runme')
+    expect(fs.mkdir).toBeCalledWith('/tmp/runmejs-test-bin', { recursive: true })
+  })
+
   it('fails if environment is not supported', async () => {
+    vi.mocked(fs.access).mockRejectedValue(new Error('ups'))
     vi.mocked(os.type).mockReturnValue('foobar')
     await expect(download()).rejects.toThrow(/Platform not supported/)
     expect(console.log).toBeCalledTimes(1)
@@ -85,6 +117,8 @@ describe('CLI Download', () => {
 })
 
 afterAll(() => {
+  delete process.env.RUNME_BIN_DIR
+  delete process.env.RUNME_DOWNLOAD_BASE_URL
   vi.restoreAllMocks()
   console.log = consoleLog
   console.table = consoleTable
